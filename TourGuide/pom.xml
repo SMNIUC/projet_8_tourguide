@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.openclassrooms</groupId>
 	<artifactId>tourguide</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>tourguide</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
@@ -50,21 +50,38 @@
 		<dependency>
 			<groupId>gpsUtil</groupId>
 			<artifactId>gpsUtil</artifactId>
-			<version>1.0.0</version>
+			<version>1</version>
 		</dependency>
 
 		<dependency>
 			<groupId>tripPricer</groupId>
 			<artifactId>tripPricer</artifactId>
-			<version>1.0.0</version>
+			<version>1</version>
 		</dependency>
 
 		<dependency>
 			<groupId>rewardCentral</groupId>
 			<artifactId>rewardCentral</artifactId>
-			<version>1.0.0</version>
+			<version>1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>annotationProcessor</scope>
 		</dependency>
 	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>libs</id>
+			<url>file:///${project.basedir}/libs</url>
+		</repository>
+	</repositories>
 
 	<build>
 		<plugins>
