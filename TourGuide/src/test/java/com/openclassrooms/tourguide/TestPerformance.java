@@ -7,6 +7,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.openclassrooms.tourguide.service.LocationService;
+import com.openclassrooms.tourguide.service.test.TestingService;
+import com.openclassrooms.tourguide.service.UserService;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -15,10 +18,9 @@ import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
-import com.openclassrooms.tourguide.helper.InternalTestHelper;
+import com.openclassrooms.tourguide.testTools.InternalTestHelper;
 import com.openclassrooms.tourguide.service.RewardsService;
-import com.openclassrooms.tourguide.service.TourGuideService;
-import com.openclassrooms.tourguide.user.User;
+import com.openclassrooms.tourguide.domain.User;
 
 public class TestPerformance
 {
@@ -53,19 +55,21 @@ public class TestPerformance
         // Users should be incremented up to 100,000, and test finishes within 15
         // minutes
         InternalTestHelper.setInternalUserNumber( 100 );
-        TourGuideService tourGuideService = new TourGuideService( gpsUtil, rewardsService );
+        TestingService testingService = new TestingService( );
+        LocationService locationService = new LocationService( gpsUtil, rewardsService );
+        UserService userService = new UserService( testingService, locationService );
 
         List<User> allUsers;
-        allUsers = tourGuideService.getAllUsers( );
+        allUsers = userService.getAllUsers( );
 
         StopWatch stopWatch = new StopWatch( );
         stopWatch.start( );
         for ( User user : allUsers )
         {
-            tourGuideService.trackUserLocation( user );
+            locationService.trackUserLocation( user );
         }
         stopWatch.stop( );
-        tourGuideService.tracker.stopTracking( );
+        userService.tracker.stopTracking( );
 
         System.out.println( "highVolumeTrackLocation: Time Elapsed: "
                 + TimeUnit.MILLISECONDS.toSeconds( stopWatch.getTime( ) ) + " seconds." );
@@ -84,21 +88,26 @@ public class TestPerformance
         InternalTestHelper.setInternalUserNumber( 100 );
         StopWatch stopWatch = new StopWatch( );
         stopWatch.start( );
-        TourGuideService tourGuideService = new TourGuideService( gpsUtil, rewardsService );
+        TestingService testingService = new TestingService( );
+        LocationService locationService = new LocationService( gpsUtil, rewardsService );
+        UserService userService = new UserService( testingService, locationService );
 
         Attraction attraction = gpsUtil.getAttractions( ).get( 0 );
         List<User> allUsers;
-        allUsers = tourGuideService.getAllUsers( );
+        allUsers = userService.getAllUsers( );
         allUsers.forEach( u -> u.addToVisitedLocations( new VisitedLocation( u.getUserId( ), attraction, new Date( ) ) ) );
 
-        allUsers.forEach( rewardsService::calculateRewards );
+        for ( User user : allUsers )
+        {
+            rewardsService.calculateRewards( user, user.getLastVisitedLocation( ) );
+        }
 
         for ( User user : allUsers )
         {
             assertFalse( user.getUserRewards( ).isEmpty( ) );
         }
         stopWatch.stop( );
-        tourGuideService.tracker.stopTracking( );
+        userService.tracker.stopTracking( );
 
         System.out.println( "highVolumeGetRewards: Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds( stopWatch.getTime( ) )
                 + " seconds." );
