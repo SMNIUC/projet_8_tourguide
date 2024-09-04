@@ -47,10 +47,13 @@ public class RewardsService
         {
             for ( Attraction attraction : attractions )
             {
+                // This line compares all the already existing userRewards to ensure none matches those from the attractions near the visited locations
                 if ( user.getUserRewards( ).stream( ).noneMatch( r -> r.attraction.attractionName.equals( attraction.attractionName ) ) )
                 {
+                    // If none matches, and if the locations are less than 10 miles apart...
                     if ( nearAttraction( visitedLocation, attraction ) )
                     {
+                        // create a new reward and add it to the user's rewards list
                         user.addUserReward( new UserReward( visitedLocation, attraction, getRewardPoints( attraction, user ) ) );
                     }
                 }
@@ -65,6 +68,7 @@ public class RewardsService
 
     private boolean nearAttraction( VisitedLocation visitedLocation, Attraction attraction )
     {
+        // returns True if the attraction is closer than 10 miles (included) from the visited location
         return !( getDistance( attraction, visitedLocation.location ) > proximityBuffer );
     }
 

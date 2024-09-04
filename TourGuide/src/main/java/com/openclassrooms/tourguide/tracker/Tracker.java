@@ -14,7 +14,7 @@ import com.openclassrooms.tourguide.user.User;
 
 public class Tracker extends Thread
 {
-    private final Logger logger 							  = LoggerFactory.getLogger( Tracker.class );
+    private Logger logger 							  = LoggerFactory.getLogger( Tracker.class );
 
     private static final long trackingPollingInterval = TimeUnit.MINUTES.toSeconds( 5 );
     private final ExecutorService executorService 	  = Executors.newSingleThreadExecutor( );
@@ -47,20 +47,20 @@ public class Tracker extends Thread
         {
             if ( Thread.currentThread( ).isInterrupted( ) || stop )
             {
-                logger.debug( "Tracker stopping" );
+                logger.info( "Tracker stopping" );
                 break;
             }
 
             List<User> users = tourGuideService.getAllUsers( );
-            logger.debug( "Begin Tracker. Tracking {} users.", users.size( ) );
+            logger.info( "Begin Tracker. Tracking {} users.", users.size( ) );
             stopWatch.start( );
             users.forEach( tourGuideService::trackUserLocation );
             stopWatch.stop( );
-            logger.debug( "Tracker Time Elapsed: {} seconds.", TimeUnit.MILLISECONDS.toSeconds( stopWatch.getTime( ) ) );
+            logger.info( "Tracker Time Elapsed: {} seconds.", TimeUnit.MILLISECONDS.toSeconds( stopWatch.getTime( ) ) );
             stopWatch.reset( );
             try
             {
-                logger.debug( "Tracker sleeping" );
+                logger.info( "Tracker sleeping" );
                 TimeUnit.SECONDS.sleep( trackingPollingInterval );
             } catch ( InterruptedException e )
             {

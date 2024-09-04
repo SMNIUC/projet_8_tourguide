@@ -40,6 +40,11 @@ public class User
         visitedLocations.clear( );
     }
 
+    public VisitedLocation getLastVisitedLocation( )
+    {
+        return visitedLocations.get( visitedLocations.size( ) - 1 );
+    }
+
     public void addUserReward( UserReward userReward )
     {
         // simplified by intellij - check on git for original
@@ -47,10 +52,5 @@ public class User
         {
             userRewards.add( userReward );
         }
-    }
-
-    public VisitedLocation getLastVisitedLocation( )
-    {
-        return visitedLocations.get( visitedLocations.size( ) - 1 );
     }
 }

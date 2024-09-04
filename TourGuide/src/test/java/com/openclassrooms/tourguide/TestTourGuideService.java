@@ -115,8 +115,7 @@ public class TestTourGuideService
         assertEquals( 5, attractions.size( ) );
     }
 
-    @Disabled
-    @Test
+    // Hors du champ d'application
     public void getTripDeals( )
     {
         GpsUtil gpsUtil = new GpsUtil( );
