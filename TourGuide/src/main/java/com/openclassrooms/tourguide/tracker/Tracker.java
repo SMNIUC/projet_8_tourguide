@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.openclassrooms.tourguide.service.TourGuideService;
 import com.openclassrooms.tourguide.user.User;
 
+// Class that simulates a user's movements and tracks its simulated location by adding random locations randomly
 public class Tracker extends Thread
 {
     private Logger logger 							  = LoggerFactory.getLogger( Tracker.class );

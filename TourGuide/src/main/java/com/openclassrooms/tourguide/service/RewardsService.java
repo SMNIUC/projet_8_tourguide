@@ -1,6 +1,7 @@
 package com.openclassrooms.tourguide.service;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import lombok.Data;
 import org.springframework.stereotype.Service;
@@ -40,25 +41,28 @@ public class RewardsService
 
     public void calculateRewards( User user )
     {
-        List<VisitedLocation> userLocations = user.getVisitedLocations( );
+        CopyOnWriteArrayList<VisitedLocation> originalUserLocationList = new CopyOnWriteArrayList<>( user.getVisitedLocations( ) );
         List<Attraction> attractions = gpsUtil.getAttractions( );
+        CopyOnWriteArrayList<UserReward> originalUserRewardList = new CopyOnWriteArrayList<>( user.getUserRewards( ) );
 
-        for ( VisitedLocation visitedLocation : userLocations )
+        for ( VisitedLocation visitedLocation : originalUserLocationList )
         {
             for ( Attraction attraction : attractions )
             {
                 // This line compares all the already existing userRewards to ensure none matches those from the attractions near the visited locations
-                if ( user.getUserRewards( ).stream( ).noneMatch( r -> r.attraction.attractionName.equals( attraction.attractionName ) ) )
+                if ( originalUserRewardList.stream( ).noneMatch( r -> r.attraction.attractionName.equals( attraction.attractionName ) ) )
                 {
                     // If none matches, and if the locations are less than 10 miles apart...
                     if ( nearAttraction( visitedLocation, attraction ) )
                     {
                         // create a new reward and add it to the user's rewards list
-                        user.addUserReward( new UserReward( visitedLocation, attraction, getRewardPoints( attraction, user ) ) );
+                        originalUserRewardList.add( new UserReward( visitedLocation, attraction, getRewardPoints( attraction, user ) ) );
                     }
                 }
             }
         }
+
+        user.setUserRewards( originalUserRewardList );
     }
 
     public boolean isWithinAttractionProximity( Attraction attraction, Location location )

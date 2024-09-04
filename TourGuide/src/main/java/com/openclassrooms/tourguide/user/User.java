@@ -44,13 +44,4 @@ public class User
     {
         return visitedLocations.get( visitedLocations.size( ) - 1 );
     }
-
-    public void addUserReward( UserReward userReward )
-    {
-        // simplified by intellij - check on git for original
-        if ( userRewards.stream( ).noneMatch( r -> true ) )
-        {
-            userRewards.add( userReward );
-        }
-    }
 }
