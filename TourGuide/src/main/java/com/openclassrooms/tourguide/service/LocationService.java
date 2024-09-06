@@ -1,5 +1,6 @@
 package com.openclassrooms.tourguide.service;
 
+import com.openclassrooms.tourguide.attraction.ClosestAttractionsDTO;
 import com.openclassrooms.tourguide.domain.User;
 import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
@@ -17,6 +18,7 @@ public class LocationService
     // Imported lib objects
     private final GpsUtil gpsUtil;
     private final RewardsService rewardsService;
+
 
     /**
      * Retrieves a list of attractions near the specified location based on proximity.
@@ -40,6 +42,28 @@ public class LocationService
     }
 
     /**
+     * Retrieves a list of attractions near the specified location based on proximity.
+     *
+     * @param visitedLocation the location from which to search for nearby attractions
+     * @return a list of attractions near the specified location
+     */
+    public List<ClosestAttractionsDTO> getFiveClosestAttractions( VisitedLocation visitedLocation )
+    {
+        List<ClosestAttractionsDTO> nearbyAttractions = new ArrayList<>( );
+//
+//        for ( ClosestAttractionsDTO attraction : gpsUtil.getAttractions( ) )
+//        {
+//            if ( rewardsService.isWithinAttractionProximity( attraction, visitedLocation.location ) )
+//            {
+//                nearbyAttractions.add( attraction );
+//            }
+//        }
+
+        return nearbyAttractions;
+    }
+
+
+    /**
      * Tracks the user's location using the GPS utility service, updates the user's visited locations,
      * and calculates rewards based on the new location.
      *
@@ -51,7 +75,7 @@ public class LocationService
         VisitedLocation visitedLocation = gpsUtil.getUserLocation( user.getUserId( ) );
 
         user.addToVisitedLocations( visitedLocation );
-        rewardsService.calculateRewards( user, visitedLocation );
+        rewardsService.calculateRewards( user );
 
         return visitedLocation;
     }

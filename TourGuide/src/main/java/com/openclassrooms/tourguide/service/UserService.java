@@ -41,6 +41,7 @@ public class UserService
 
     boolean testMode = true;
 
+
     /**
      * Constructs a new {@code UserService} with the provided {@code GpsUtil} and {@code RewardsService}.
      * If test mode is enabled, it initializes internal users for testing purposes.
@@ -64,6 +65,7 @@ public class UserService
         addShutDownHook( );
     }
 
+
     /**
      * Retrieves the user by their username.
      *
@@ -75,6 +77,7 @@ public class UserService
         return testingService.internalUserMap.get( userName );
     }
 
+
     /**
      * Retrieves a list of all users managed by this service.
      *
@@ -84,6 +87,7 @@ public class UserService
     {
         return new ArrayList<>( testingService.internalUserMap.values( ) );
     }
+
 
     /**
      * Adds a new user to the internal user map if the user does not already exist.
@@ -98,6 +102,7 @@ public class UserService
         }
     }
 
+
     /**
      * Retrieves the current location of the specified user.
      * If the user has no recorded locations, it tracks the user's location.
@@ -110,6 +115,7 @@ public class UserService
         return ( !user.getVisitedLocations( ).isEmpty( ) ) ? user.getLastVisitedLocation( )
                 : locationService.trackUserLocation( user );
     }
+
 
     /**
      * Retrieves a list of trip deals for the specified user based on their reward points
@@ -130,6 +136,7 @@ public class UserService
 
         return providers;
     }
+
 
     /**
      * Adds a shutdown hook to ensure the tracker stops tracking when the JVM shuts down.

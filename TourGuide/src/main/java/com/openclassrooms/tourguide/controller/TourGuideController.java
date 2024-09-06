@@ -2,6 +2,7 @@ package com.openclassrooms.tourguide.controller;
 
 import java.util.List;
 
+import com.openclassrooms.tourguide.attraction.ClosestAttractionsDTO;
 import com.openclassrooms.tourguide.service.LocationService;
 import com.openclassrooms.tourguide.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 
 import com.openclassrooms.tourguide.domain.User;
@@ -46,10 +46,10 @@ public class TourGuideController
     // The reward points for visiting each Attraction.
     //    Note: Attraction reward points can be gathered from RewardsCentral
     @RequestMapping("/getNearbyAttractions")
-    public List<Attraction> getNearbyAttractions( @RequestParam String userName )
+    public List<ClosestAttractionsDTO> getNearbyAttractions( @RequestParam String userName )
     {
         VisitedLocation visitedLocation = userService.getUserLocation( getUser( userName ) );
-        return locationService.getNearByAttractions( visitedLocation );
+        return locationService.getFiveClosestAttractions( visitedLocation );
     }
 
     @RequestMapping("/getRewards")

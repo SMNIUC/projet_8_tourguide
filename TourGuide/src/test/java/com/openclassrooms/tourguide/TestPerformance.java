@@ -96,11 +96,7 @@ public class TestPerformance
         List<User> allUsers;
         allUsers = userService.getAllUsers( );
         allUsers.forEach( u -> u.addToVisitedLocations( new VisitedLocation( u.getUserId( ), attraction, new Date( ) ) ) );
-
-        for ( User user : allUsers )
-        {
-            rewardsService.calculateRewards( user, user.getLastVisitedLocation( ) );
-        }
+        allUsers.forEach( rewardsService::calculateRewards );
 
         for ( User user : allUsers )
         {

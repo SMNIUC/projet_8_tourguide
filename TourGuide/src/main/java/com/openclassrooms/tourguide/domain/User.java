@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.openclassrooms.tourguide.testUtils.UserPreferences;
 import gpsUtil.location.VisitedLocation;
@@ -18,7 +19,7 @@ public class User
     private String                phoneNumber;
     private String                emailAddress;
     private Date                  latestLocationTimestamp;
-    private List<VisitedLocation> visitedLocations = new ArrayList<>( );
+    private CopyOnWriteArrayList<VisitedLocation> visitedLocations = new CopyOnWriteArrayList<>( );
     private List<UserReward>      userRewards = new ArrayList<>( );
     private UserPreferences       userPreferences = new UserPreferences( );
     private List<Provider>        tripDeals = new ArrayList<>( );
@@ -56,18 +57,5 @@ public class User
     public void clearVisitedLocations( )
     {
         visitedLocations.clear( );
-    }
-
-    /**********************************************************************************
-     *
-     * Methods Below: For Rewards
-     *
-     **********************************************************************************/
-    public void addUserReward( UserReward userReward )
-    {
-        if ( userRewards.stream( ).noneMatch( r -> true ) )
-        {
-            userRewards.add( userReward );
-        }
     }
 }

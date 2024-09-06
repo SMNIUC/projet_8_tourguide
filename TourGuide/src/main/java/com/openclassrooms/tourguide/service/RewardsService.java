@@ -1,6 +1,7 @@
 package com.openclassrooms.tourguide.service;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import lombok.Data;
 import org.springframework.stereotype.Service;
@@ -68,24 +69,30 @@ public class RewardsService
      *
      * @param user the {@link User} for whom rewards are to be calculated
      */
-    public void calculateRewards( User user, VisitedLocation visitedLocation )
+    public void calculateRewards( User user )
     {
+        List<VisitedLocation> visitedLocations = user.getVisitedLocations( );
         List<Attraction> attractions = gpsUtil.getAttractions( );
+        CopyOnWriteArrayList<UserReward> originalUserRewardsList = new CopyOnWriteArrayList<>( user.getUserRewards( ) );
 
-        for ( Attraction attraction : attractions )
+        for( VisitedLocation visitedLocation : visitedLocations )
         {
-            // This line compares all the already existing userRewards to ensure none matches those from the attractions near the visited locations
-            // Looping through the userRewards stream while I'm updating it two lines below....
-            if ( user.getUserRewards( ).stream( ).noneMatch( r -> r.attraction.attractionName.equals( attraction.attractionName ) ) )
+            for ( Attraction attraction : attractions )
             {
-                // If none matches, and if the locations are less than 10 miles apart...
-                if ( nearAttraction( visitedLocation, attraction ) )
+                // This line compares all the already existing userRewards to ensure none matches those from the attractions near the visited locations
+                // Looping through the userRewards stream while I'm updating it two lines below....
+                if ( originalUserRewardsList.stream( ).noneMatch( r -> r.attraction.attractionName.equals( attraction.attractionName ) ) )
                 {
-                    // create a new reward and add it to the user's rewards list
-                    user.addUserReward( new UserReward( visitedLocation, attraction, getRewardPoints( attraction, user ) ) );
+                    // If none matches, and if the locations are less than 10 miles apart...
+                    if ( nearAttraction( visitedLocation, attraction ) )
+                    {
+                        // create a new reward and add it to the user's rewards list
+                        originalUserRewardsList.add( new UserReward( visitedLocation, attraction, getRewardPoints( attraction, user ) ) );
+                    }
                 }
             }
         }
+        user.setUserRewards( originalUserRewardsList );
     }
 
     /**
