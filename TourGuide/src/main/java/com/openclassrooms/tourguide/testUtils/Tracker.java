@@ -1,4 +1,4 @@
-package com.openclassrooms.tourguide.testTools;
+package com.openclassrooms.tourguide.testUtils;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;

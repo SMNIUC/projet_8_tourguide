@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import com.openclassrooms.tourguide.testTools.UserPreferences;
+import com.openclassrooms.tourguide.testUtils.UserPreferences;
 import gpsUtil.location.VisitedLocation;
 import lombok.Data;
 import tripPricer.Provider;

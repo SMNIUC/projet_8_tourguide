@@ -1,7 +1,7 @@
 package com.openclassrooms.tourguide.service.test;
 
 import com.openclassrooms.tourguide.domain.User;
-import com.openclassrooms.tourguide.testTools.InternalTestHelper;
+import com.openclassrooms.tourguide.testUtils.InternalTestHelper;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import lombok.RequiredArgsConstructor;

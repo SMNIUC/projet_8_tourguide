@@ -18,7 +18,7 @@ import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
-import com.openclassrooms.tourguide.testTools.InternalTestHelper;
+import com.openclassrooms.tourguide.testUtils.InternalTestHelper;
 import com.openclassrooms.tourguide.service.RewardsService;
 import com.openclassrooms.tourguide.domain.User;
 

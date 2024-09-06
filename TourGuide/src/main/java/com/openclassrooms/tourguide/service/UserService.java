@@ -2,7 +2,7 @@ package com.openclassrooms.tourguide.service;
 
 import com.openclassrooms.tourguide.domain.UserReward;
 import com.openclassrooms.tourguide.service.test.TestingService;
-import com.openclassrooms.tourguide.testTools.Tracker;
+import com.openclassrooms.tourguide.testUtils.Tracker;
 import com.openclassrooms.tourguide.domain.User;
 import java.util.ArrayList;
 import java.util.List;

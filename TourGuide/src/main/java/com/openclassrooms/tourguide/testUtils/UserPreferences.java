@@ -1,4 +1,4 @@
-package com.openclassrooms.tourguide.testTools;
+package com.openclassrooms.tourguide.testUtils;
 
 import lombok.Data;
 
