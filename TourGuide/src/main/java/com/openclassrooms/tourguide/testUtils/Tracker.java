@@ -1,16 +1,17 @@
-package com.openclassrooms.tourguide.tracker;
+package com.openclassrooms.tourguide.testUtils;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import com.openclassrooms.tourguide.service.LocationService;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.openclassrooms.tourguide.service.TourGuideService;
-import com.openclassrooms.tourguide.user.User;
+import com.openclassrooms.tourguide.service.UserService;
+import com.openclassrooms.tourguide.domain.User;
 
 public class Tracker extends Thread
 {
@@ -18,14 +19,16 @@ public class Tracker extends Thread
 
     private static final long trackingPollingInterval = TimeUnit.MINUTES.toSeconds( 5 );
     private final ExecutorService executorService 	  = Executors.newSingleThreadExecutor( );
-    private final TourGuideService tourGuideService;
+    private final UserService userService;
+    private final LocationService locationService;
 
     private boolean stop 							  = false;
 
 
-    public Tracker( TourGuideService tourGuideService )
+    public Tracker( UserService userService, LocationService locationService )
     {
-        this.tourGuideService = tourGuideService;
+        this.userService = userService;
+        this.locationService = locationService;
 
         executorService.submit( this );
     }
@@ -51,10 +54,10 @@ public class Tracker extends Thread
                 break;
             }
 
-            List<User> users = tourGuideService.getAllUsers( );
+            List<User> users = userService.getAllUsers( );
             logger.info( "Begin Tracker. Tracking {} users.", users.size( ) );
             stopWatch.start( );
-            users.forEach( tourGuideService::trackUserLocation );
+            users.forEach( locationService::trackUserLocation );
             stopWatch.stop( );
             logger.info( "Tracker Time Elapsed: {} seconds.", TimeUnit.MILLISECONDS.toSeconds( stopWatch.getTime( ) ) );
             stopWatch.reset( );

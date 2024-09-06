@@ -1,10 +1,11 @@
-package com.openclassrooms.tourguide.user;
+package com.openclassrooms.tourguide.domain;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import com.openclassrooms.tourguide.testUtils.UserPreferences;
 import gpsUtil.location.VisitedLocation;
 import lombok.Data;
 import tripPricer.Provider;
@@ -22,12 +23,29 @@ public class User
     private UserPreferences       userPreferences = new UserPreferences( );
     private List<Provider>        tripDeals = new ArrayList<>( );
 
+
+    /**********************************************************************************
+     *
+     * Method Below: Constructor
+     *
+     **********************************************************************************/
     public User( UUID userId, String userName, String phoneNumber, String emailAddress )
     {
         this.userId = userId;
         this.userName = userName;
         this.phoneNumber = phoneNumber;
         this.emailAddress = emailAddress;
+    }
+
+
+    /**********************************************************************************
+     *
+     * Methods Below: For Location
+     *
+     **********************************************************************************/
+    public VisitedLocation getLastVisitedLocation( )
+    {
+        return visitedLocations.get( visitedLocations.size( ) - 1 );
     }
 
     public void addToVisitedLocations( VisitedLocation visitedLocation )
@@ -40,14 +58,13 @@ public class User
         visitedLocations.clear( );
     }
 
-    public VisitedLocation getLastVisitedLocation( )
-    {
-        return visitedLocations.get( visitedLocations.size( ) - 1 );
-    }
-
+    /**********************************************************************************
+     *
+     * Methods Below: For Rewards
+     *
+     **********************************************************************************/
     public void addUserReward( UserReward userReward )
     {
-        // simplified by intellij - check on git for original
         if ( userRewards.stream( ).noneMatch( r -> true ) )
         {
             userRewards.add( userReward );
