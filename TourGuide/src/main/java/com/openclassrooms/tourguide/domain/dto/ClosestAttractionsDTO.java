@@ -1,4 +1,4 @@
-package com.openclassrooms.tourguide.attraction;
+package com.openclassrooms.tourguide.domain.dto;
 
 import gpsUtil.location.Location;
 import lombok.Data;
@@ -9,6 +9,6 @@ public class ClosestAttractionsDTO
     private String attractionName;
     private Location attractionLocation;
     private Location userLocation;
-    private Double userDistanceToAttraction;
+    private Double userDistanceInMilesToAttraction;
     private int rewardPoints;
 }

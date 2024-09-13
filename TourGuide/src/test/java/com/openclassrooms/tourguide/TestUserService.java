@@ -6,13 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 import java.util.UUID;
 
+import com.openclassrooms.tourguide.domain.dto.ClosestAttractionsDTO;
 import com.openclassrooms.tourguide.service.LocationService;
 import com.openclassrooms.tourguide.service.test.TestingService;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import gpsUtil.GpsUtil;
-import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
 import com.openclassrooms.tourguide.testUtils.InternalTestHelper;
@@ -27,14 +27,14 @@ public class TestUserService
     public void getUserLocation( )
     {
         GpsUtil gpsUtil = new GpsUtil( );
-        RewardsService rewardsService = new RewardsService( gpsUtil, new RewardCentral( ) );
+        LocationService locationService = new LocationService( new RewardCentral( ), gpsUtil );
+        RewardsService rewardsService = new RewardsService( gpsUtil, new RewardCentral( ), locationService );
         InternalTestHelper.setInternalUserNumber( 0 );
         TestingService testingService = new TestingService( );
-        LocationService locationService = new LocationService( gpsUtil, rewardsService );
-        UserService userService = new UserService( testingService, locationService );
+        UserService userService = new UserService( gpsUtil, rewardsService, testingService );
 
         User user = new User( UUID.randomUUID( ), "jon", "000", "jon@tourGuide.com" );
-        VisitedLocation visitedLocation = locationService.trackUserLocation( user );
+        VisitedLocation visitedLocation = userService.trackUserLocation( user );
         userService.tracker.stopTracking( );
         assertEquals( visitedLocation.userId, user.getUserId( ) );
     }
@@ -43,11 +43,11 @@ public class TestUserService
     public void addUser( )
     {
         GpsUtil gpsUtil = new GpsUtil( );
-        RewardsService rewardsService = new RewardsService( gpsUtil, new RewardCentral( ) );
+        LocationService locationService = new LocationService( new RewardCentral( ), gpsUtil );
+        RewardsService rewardsService = new RewardsService( gpsUtil, new RewardCentral( ), locationService );
         InternalTestHelper.setInternalUserNumber( 0 );
         TestingService testingService = new TestingService( );
-        LocationService locationService = new LocationService( gpsUtil, rewardsService );
-        UserService userService = new UserService( testingService, locationService );
+        UserService userService = new UserService( gpsUtil, rewardsService, testingService );
 
         User user = new User( UUID.randomUUID( ), "jon", "000", "jon@tourGuide.com" );
         User user2 = new User( UUID.randomUUID( ), "jon2", "000", "jon2@tourGuide.com" );
@@ -68,11 +68,11 @@ public class TestUserService
     public void getAllUsers( )
     {
         GpsUtil gpsUtil = new GpsUtil( );
-        RewardsService rewardsService = new RewardsService( gpsUtil, new RewardCentral( ) );
+        LocationService locationService = new LocationService( new RewardCentral( ), gpsUtil );
+        RewardsService rewardsService = new RewardsService( gpsUtil, new RewardCentral( ), locationService );
         InternalTestHelper.setInternalUserNumber( 0 );
         TestingService testingService = new TestingService( );
-        LocationService locationService = new LocationService( gpsUtil, rewardsService );
-        UserService userService = new UserService( testingService, locationService );
+        UserService userService = new UserService( gpsUtil, rewardsService, testingService );
 
         User user = new User( UUID.randomUUID( ), "jon", "000", "jon@tourGuide.com" );
         User user2 = new User( UUID.randomUUID( ), "jon2", "000", "jon2@tourGuide.com" );
@@ -92,35 +92,35 @@ public class TestUserService
     public void trackUser( )
     {
         GpsUtil gpsUtil = new GpsUtil( );
-        RewardsService rewardsService = new RewardsService( gpsUtil, new RewardCentral( ) );
+        LocationService locationService = new LocationService( new RewardCentral( ), gpsUtil );
+        RewardsService rewardsService = new RewardsService( gpsUtil, new RewardCentral( ), locationService );
         InternalTestHelper.setInternalUserNumber( 0 );
         TestingService testingService = new TestingService( );
-        LocationService locationService = new LocationService( gpsUtil, rewardsService );
-        UserService userService = new UserService( testingService, locationService );
+        UserService userService = new UserService( gpsUtil, rewardsService, testingService );
 
         User user = new User( UUID.randomUUID( ), "jon", "000", "jon@tourGuide.com" );
-        VisitedLocation visitedLocation = locationService.trackUserLocation( user );
+        VisitedLocation visitedLocation = userService.trackUserLocation( user );
 
         userService.tracker.stopTracking( );
 
         assertEquals( user.getUserId( ), visitedLocation.userId );
     }
 
-    @Disabled // Not yet implemented
     @Test
-    public void getNearbyAttractions( )
+    public void getFiveClosestAttractions( )
     {
         GpsUtil gpsUtil = new GpsUtil( );
-        RewardsService rewardsService = new RewardsService( gpsUtil, new RewardCentral( ) );
+        LocationService locationService = new LocationService( new RewardCentral( ), gpsUtil );
+        RewardsService rewardsService = new RewardsService( gpsUtil, new RewardCentral( ), locationService );
         InternalTestHelper.setInternalUserNumber( 0 );
         TestingService testingService = new TestingService( );
-        LocationService locationService = new LocationService( gpsUtil, rewardsService );
-        UserService userService = new UserService( testingService, locationService );
+        UserService userService = new UserService( gpsUtil, rewardsService, testingService );
 
         User user = new User( UUID.randomUUID( ), "jon", "000", "jon@tourGuide.com" );
-        VisitedLocation visitedLocation = locationService.trackUserLocation( user );
+        VisitedLocation visitedLocation = userService.trackUserLocation( user );
 
-        List<Attraction> attractions = locationService.getNearByAttractions( visitedLocation );
+        // Modified to test new code
+        List<ClosestAttractionsDTO> attractions = locationService.getFiveClosestAttractions( visitedLocation );
 
         userService.tracker.stopTracking( );
 
@@ -132,11 +132,11 @@ public class TestUserService
     public void getTripDeals( )
     {
         GpsUtil gpsUtil = new GpsUtil( );
-        RewardsService rewardsService = new RewardsService( gpsUtil, new RewardCentral( ) );
+        LocationService locationService = new LocationService( new RewardCentral( ), gpsUtil );
+        RewardsService rewardsService = new RewardsService( gpsUtil, new RewardCentral( ), locationService );
         InternalTestHelper.setInternalUserNumber( 0 );
         TestingService testingService = new TestingService( );
-        LocationService locationService = new LocationService( gpsUtil, rewardsService );
-        UserService userService = new UserService( testingService, locationService );
+        UserService userService = new UserService( gpsUtil, rewardsService, testingService );
 
         User user = new User( UUID.randomUUID( ), "jon", "000", "jon@tourGuide.com" );
 

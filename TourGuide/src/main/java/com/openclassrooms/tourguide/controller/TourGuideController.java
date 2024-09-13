@@ -2,7 +2,7 @@ package com.openclassrooms.tourguide.controller;
 
 import java.util.List;
 
-import com.openclassrooms.tourguide.attraction.ClosestAttractionsDTO;
+import com.openclassrooms.tourguide.domain.dto.ClosestAttractionsDTO;
 import com.openclassrooms.tourguide.service.LocationService;
 import com.openclassrooms.tourguide.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -36,15 +36,6 @@ public class TourGuideController
         return userService.getUserLocation( getUser( userName ) );
     }
 
-    //  TODO: Change this method to no longer return a List of Attractions.
-    //  Instead: Get the closest five tourist attractions to the user - no matter how far away they are.
-    //  Return a new JSON object that contains:
-    // Name of Tourist attraction,
-    // Tourist attractions lat/long,
-    // The user's location lat/long,
-    // The distance in miles between the user's location and each of the attractions.
-    // The reward points for visiting each Attraction.
-    //    Note: Attraction reward points can be gathered from RewardsCentral
     @RequestMapping("/getNearbyAttractions")
     public List<ClosestAttractionsDTO> getNearbyAttractions( @RequestParam String userName )
     {

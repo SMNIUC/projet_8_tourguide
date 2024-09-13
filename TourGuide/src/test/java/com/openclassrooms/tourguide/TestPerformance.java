@@ -46,18 +46,18 @@ public class TestPerformance
      * assertTrue(TimeUnit.MINUTES.toSeconds(20) >=
      * TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
      */
-    @Disabled
+//    @Disabled
     @Test
     public void highVolumeTrackLocation( )
     {
         GpsUtil gpsUtil = new GpsUtil( );
-        RewardsService rewardsService = new RewardsService( gpsUtil, new RewardCentral( ) );
+        LocationService locationService = new LocationService( new RewardCentral( ), gpsUtil );
+        RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral( ), locationService );
         // Users should be incremented up to 100,000, and test finishes within 15
         // minutes
-        InternalTestHelper.setInternalUserNumber( 100 );
+        InternalTestHelper.setInternalUserNumber( 10000 );
         TestingService testingService = new TestingService( );
-        LocationService locationService = new LocationService( gpsUtil, rewardsService );
-        UserService userService = new UserService( testingService, locationService );
+        UserService userService = new UserService( gpsUtil, rewardsService, testingService );
 
         List<User> allUsers;
         allUsers = userService.getAllUsers( );
@@ -66,7 +66,7 @@ public class TestPerformance
         stopWatch.start( );
         for ( User user : allUsers )
         {
-            locationService.trackUserLocation( user );
+            userService.trackUserLocation( user );
         }
         stopWatch.stop( );
         userService.tracker.stopTracking( );
@@ -81,7 +81,8 @@ public class TestPerformance
     public void highVolumeGetRewards( )
     {
         GpsUtil gpsUtil = new GpsUtil( );
-        RewardsService rewardsService = new RewardsService( gpsUtil, new RewardCentral( ) );
+        LocationService locationService = new LocationService( new RewardCentral( ), gpsUtil );
+        RewardsService rewardsService = new RewardsService( gpsUtil, new RewardCentral( ), locationService );
 
         // Users should be incremented up to 100,000, and test finishes within 20
         // minutes
@@ -89,8 +90,7 @@ public class TestPerformance
         StopWatch stopWatch = new StopWatch( );
         stopWatch.start( );
         TestingService testingService = new TestingService( );
-        LocationService locationService = new LocationService( gpsUtil, rewardsService );
-        UserService userService = new UserService( testingService, locationService );
+        UserService userService = new UserService( gpsUtil, rewardsService, testingService );
 
         Attraction attraction = gpsUtil.getAttractions( ).get( 0 );
         List<User> allUsers;

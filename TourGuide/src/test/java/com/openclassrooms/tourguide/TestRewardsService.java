@@ -26,30 +26,39 @@ public class TestRewardsService
     @Test
     public void userGetRewards( )
     {
+        // GIVEN
         GpsUtil gpsUtil = new GpsUtil( );
-        RewardsService rewardsService = new RewardsService( gpsUtil, new RewardCentral( ) );
+        TestingService testingService = new TestingService( );
+        RewardsService rewardsService = new RewardsService( gpsUtil, new RewardCentral( ), new LocationService( new RewardCentral( ), gpsUtil ) );
 
         InternalTestHelper.setInternalUserNumber( 0 );
-        TestingService testingService = new TestingService( );
-        LocationService locationService = new LocationService( gpsUtil, rewardsService );
-        UserService userService = new UserService( testingService, locationService );
+        UserService userService = new UserService( gpsUtil, rewardsService, testingService );
 
+        // WHEN
         User user = new User( UUID.randomUUID( ), "jon", "000", "jon@tourGuide.com" );
         Attraction attraction = gpsUtil.getAttractions( ).get( 0 );
         user.addToVisitedLocations( new VisitedLocation( user.getUserId( ), attraction, new Date( ) ) );
-        locationService.trackUserLocation( user );
+        userService.trackUserLocation( user );
         List<UserReward> userRewards = user.getUserRewards( );
         userService.tracker.stopTracking( );
+
+        // THEN
         assertEquals( 1, userRewards.size( ) );
     }
 
     @Test
     public void isWithinAttractionProximity( )
     {
+        // GIVEN
         GpsUtil gpsUtil = new GpsUtil( );
-        RewardsService rewardsService = new RewardsService( gpsUtil, new RewardCentral( ) );
+        RewardCentral rewardCentral = new RewardCentral( );
+        LocationService locationService = new LocationService( rewardCentral, gpsUtil );
+
+        // WHEN
         Attraction attraction = gpsUtil.getAttractions( ).get( 0 );
-        assertTrue( rewardsService.isWithinAttractionProximity( attraction, attraction ) );
+
+        // THEN
+        assertTrue( locationService.isWithinAttractionProximity( attraction, attraction ) );
     }
 
     @Test
@@ -57,13 +66,15 @@ public class TestRewardsService
     {
         //GIVEN
         GpsUtil gpsUtil = new GpsUtil( );
-        RewardsService rewardsService = new RewardsService( gpsUtil, new RewardCentral( ) );
-        rewardsService.setProximityBuffer( Integer.MAX_VALUE );
+        TestingService testingService = new TestingService( );
+        RewardCentral rewardCentral = new RewardCentral( );
+        LocationService locationService = new LocationService( rewardCentral, gpsUtil );
+        locationService.setProximityBuffer( Integer.MAX_VALUE );
+
+        RewardsService rewardsService = new RewardsService( gpsUtil, new RewardCentral( ), locationService );
 
         InternalTestHelper.setInternalUserNumber( 1 );
-        TestingService testingService = new TestingService( );
-        LocationService locationService = new LocationService( gpsUtil, rewardsService );
-        UserService userService = new UserService( testingService, locationService );
+        UserService userService = new UserService( gpsUtil, rewardsService, testingService );
         User user = userService.getAllUsers( ).get( 0 );
 
         // WHEN

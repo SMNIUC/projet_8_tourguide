@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import gpsUtil.GpsUtil;
 import gpsUtil.location.VisitedLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,9 +35,10 @@ public class UserService
 
     // Imported lib objects
     private final TripPricer tripPricer = new TripPricer( );
+    private final GpsUtil gpsUtil;
+    private final RewardsService rewardsService;
 
     private final TestingService testingService;
-    private final LocationService locationService;
     public final Tracker tracker;
 
     boolean testMode = true;
@@ -46,12 +48,15 @@ public class UserService
      * Constructs a new {@code UserService} with the provided {@code GpsUtil} and {@code RewardsService}.
      * If test mode is enabled, it initializes internal users for testing purposes.
      *
-     * @param
+     * @param gpsUtil gpsUtil service
+     * @param rewardsService rewardService service
+     * @param testingService testingService service
      */
-    public UserService( TestingService testingService, LocationService locationService )
+    public UserService( GpsUtil gpsUtil, RewardsService rewardsService, TestingService testingService )
     {
+        this.gpsUtil = gpsUtil;
+        this.rewardsService = rewardsService;
         this.testingService = testingService;
-        this.locationService = locationService;
         Locale.setDefault( Locale.US );
 
         if ( testMode )
@@ -61,7 +66,7 @@ public class UserService
             testingService.initializeInternalUsers( );
             logger.info( "Finished initializing users" );
         }
-        tracker = new Tracker( this,locationService  );
+        tracker = new Tracker( this );
         addShutDownHook( );
     }
 
@@ -113,7 +118,25 @@ public class UserService
     public VisitedLocation getUserLocation( User user )
     {
         return ( !user.getVisitedLocations( ).isEmpty( ) ) ? user.getLastVisitedLocation( )
-                : locationService.trackUserLocation( user );
+                : trackUserLocation( user );
+    }
+
+
+    /**
+     * Tracks the user's location using the GPS utility service, updates the user's visited locations,
+     * and calculates rewards based on the new location.
+     *
+     * @param user the user whose location is to be tracked
+     * @return the user's tracked location
+     */
+    public VisitedLocation trackUserLocation( User user )
+    {
+        VisitedLocation visitedLocation = gpsUtil.getUserLocation( user.getUserId( ) );
+
+        user.addToVisitedLocations( visitedLocation );
+        rewardsService.calculateRewards( user );
+
+        return visitedLocation;
     }
 
 

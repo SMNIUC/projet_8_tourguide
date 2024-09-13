@@ -8,7 +8,7 @@ public class InternalTestHelper
 {
     // Set this default up to 100,000 for testing
     @Getter
-    private static int internalUserNumber = 100;
+    private static int internalUserNumber = 10000;
 
     public static void setInternalUserNumber( int internalUserNumber )
     {
