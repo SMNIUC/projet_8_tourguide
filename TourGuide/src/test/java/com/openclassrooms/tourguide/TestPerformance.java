@@ -11,7 +11,6 @@ import com.openclassrooms.tourguide.service.LocationService;
 import com.openclassrooms.tourguide.service.test.TestingService;
 import com.openclassrooms.tourguide.service.UserService;
 import org.apache.commons.lang3.time.StopWatch;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import gpsUtil.GpsUtil;
@@ -66,7 +65,7 @@ public class TestPerformance
         stopWatch.start( );
         for ( User user : allUsers )
         {
-            userService.trackUserLocation( user );
+            userService.parallelizedTrackUserLocation( user );
         }
         stopWatch.stop( );
         userService.tracker.stopTracking( );
@@ -76,7 +75,7 @@ public class TestPerformance
         assertTrue( TimeUnit.MINUTES.toSeconds( 15 ) >= TimeUnit.MILLISECONDS.toSeconds( stopWatch.getTime( ) ) );
     }
 
-    @Disabled
+//    @Disabled
     @Test
     public void highVolumeGetRewards( )
     {
@@ -86,7 +85,7 @@ public class TestPerformance
 
         // Users should be incremented up to 100,000, and test finishes within 20
         // minutes
-        InternalTestHelper.setInternalUserNumber( 100 );
+        InternalTestHelper.setInternalUserNumber( 10000 );
         StopWatch stopWatch = new StopWatch( );
         stopWatch.start( );
         TestingService testingService = new TestingService( );

@@ -7,6 +7,7 @@ import com.openclassrooms.tourguide.domain.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.*;
 
 import gpsUtil.GpsUtil;
 import gpsUtil.location.VisitedLocation;
@@ -32,6 +33,7 @@ import static com.openclassrooms.tourguide.service.test.TestingService.tripPrice
 public class UserService
 {
     private Logger logger = LoggerFactory.getLogger( UserService.class );
+    ExecutorService executorService = Executors.newCachedThreadPool( );
 
     // Imported lib objects
     private final TripPricer tripPricer = new TripPricer( );
@@ -117,8 +119,7 @@ public class UserService
      */
     public VisitedLocation getUserLocation( User user )
     {
-        return ( !user.getVisitedLocations( ).isEmpty( ) ) ? user.getLastVisitedLocation( )
-                : trackUserLocation( user );
+        return ( !user.getVisitedLocations( ).isEmpty( ) ) ? user.getLastVisitedLocation( ) : trackUserLocation( user );
     }
 
 
@@ -132,11 +133,20 @@ public class UserService
     public VisitedLocation trackUserLocation( User user )
     {
         VisitedLocation visitedLocation = gpsUtil.getUserLocation( user.getUserId( ) );
-
         user.addToVisitedLocations( visitedLocation );
         rewardsService.calculateRewards( user );
 
         return visitedLocation;
+    }
+
+
+    public void parallelizedTrackUserLocation( User user )
+    {
+        CompletableFuture.supplyAsync( () -> gpsUtil.getUserLocation( user.getUserId( ) ), executorService )
+                .thenAccept( location -> {
+                user.addToVisitedLocations( location );
+                rewardsService.calculateRewards( user );
+            } );
     }
 
 

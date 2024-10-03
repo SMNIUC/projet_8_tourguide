@@ -1,7 +1,7 @@
 package com.openclassrooms.tourguide.service;
 
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.*;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,7 @@ public class RewardsService
     private final RewardCentral rewardsCentral;
 
     private final LocationService locationService;
-
+    ExecutorService executorService = Executors.newCachedThreadPool( );
 
     /**
      * Calculates rewards for a given user by comparing the new visited location with known attractions.
@@ -44,26 +44,27 @@ public class RewardsService
     public void calculateRewards( User user )
     {
         List<VisitedLocation> visitedLocations = user.getVisitedLocations( );
-        List<Attraction> attractions = gpsUtil.getAttractions( );
+
+        // Get the current user rewards
         CopyOnWriteArrayList<UserReward> originalUserRewardsList = new CopyOnWriteArrayList<>( user.getUserRewards( ) );
 
-        for( VisitedLocation visitedLocation : visitedLocations )
-        {
-            for ( Attraction attraction : attractions )
-            {
-                // This line compares all the already existing userRewards to ensure none matches those from the attractions near the visited locations
-                // Looping through the userRewards stream while I'm updating it two lines below....
-                if ( originalUserRewardsList.stream( ).noneMatch( r -> r.attraction.attractionName.equals( attraction.attractionName ) ) )
-                {
-                    // If none matches, and if the locations are less than 10 miles apart...
-                    if ( locationService.nearAttraction( visitedLocation, attraction ) )
-                    {
-                        // create a new reward and add it to the user's rewards list
-                        originalUserRewardsList.add( new UserReward( visitedLocation, attraction, getRewardPoints( attraction, user ) ) );
-                    }
+        List<Attraction> attractions = gpsUtil.getAttractions( );
+
+        visitedLocations.forEach( visitedLocation ->
+            attractions.forEach( attraction -> {
+                // Check if there's no existing reward for the attraction
+                boolean noExistingRewards = originalUserRewardsList.stream( )
+                        .noneMatch( r -> r.attraction.attractionName.equals( attraction.attractionName ) );
+
+                // If no reward exists and the attraction is near the visited location
+                if ( noExistingRewards && locationService.nearAttraction( visitedLocation, attraction ) ) {
+                    // Add new reward
+                    UserReward reward = new UserReward( visitedLocation, attraction );
+                    calculateRewardPoints( attraction, user, reward );
+                    originalUserRewardsList.add( reward );
                 }
-            }
-        }
+            } )
+        );
         user.setUserRewards( originalUserRewardsList );
     }
 
@@ -73,10 +74,10 @@ public class RewardsService
      *
      * @param attraction the {@link Attraction} for which to retrieve reward points
      * @param user       the {@link User} who visited the attraction
-     * @return the number of reward points earned for visiting the attraction
      */
-    private int getRewardPoints( Attraction attraction, User user )
+    public void calculateRewardPoints( Attraction attraction, User user, UserReward reward )
     {
-        return rewardsCentral.getAttractionRewardPoints( attraction.attractionId, user.getUserId( ) );
+        CompletableFuture.supplyAsync( () -> rewardsCentral.getAttractionRewardPoints( attraction.attractionId, user.getUserId( ) ), executorService )
+                .thenAccept( reward::setRewardPoints );
     }
 }
