@@ -1,32 +1,62 @@
-stages:
- - build
- - test
+name: CI Pipeline
 
-cache:
- paths:
-   - .m2/repository
- key: "$CI_JOB_NAME"
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
-build_job:
-  stage: build
-  image: eclipse-temurin:17-jdk-alpine
-  script:
-    - ./mvnw compile
-      -Dhttps.protocols=TLSv1.2
-      -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
-      -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
-      -Dorg.slf4j.simpleLogger.showDateTime=true
-      -Djava.awt.headless=true
-      --batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true
+jobs:
+  build_job:
+    runs-on: ubuntu-latest
+    container:
+      image: eclipse-temurin:17-jdk-alpine
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-test_job:
-  stage: test
-  image: eclipse-temurin:17-jdk-alpine
-  script:
-    - ./mvnw test
-      -Dhttps.protocols=TLSv1.2
-      -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
-      -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
-      -Dorg.slf4j.simpleLogger.showDateTime=true
-      -Djava.awt.headless=true
-      --batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true
+      - name: Cache Maven repository
+        uses: actions/cache@v3
+        with:
+          path: .m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+
+      - name: Build
+        run: |
+          ./mvnw compile \
+          -Dhttps.protocols=TLSv1.2 \
+          -Dmaven.repo.local=$GITHUB_WORKSPACE/.m2/repository \
+          -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN \
+          -Dorg.slf4j.simpleLogger.showDateTime=true \
+          -Djava.awt.headless=true \
+          --batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true
+
+  test_job:
+    runs-on: ubuntu-latest
+    container:
+      image: eclipse-temurin:17-jdk-alpine
+    needs: build_job
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Cache Maven repository
+        uses: actions/cache@v3
+        with:
+          path: .m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Run tests
+        run: |
+          ./mvnw test \
+          -Dhttps.protocols=TLSv1.2 \
+          -Dmaven.repo.local=$GITHUB_WORKSPACE/.m2/repository \
+          -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN \
+          -Dorg.slf4j.simpleLogger.showDateTime=true \
+          -Djava.awt.headless=true \
+          --batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true
+
