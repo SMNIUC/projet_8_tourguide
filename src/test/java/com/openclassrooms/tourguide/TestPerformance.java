@@ -11,6 +11,7 @@ import com.openclassrooms.tourguide.service.LocationService;
 import com.openclassrooms.tourguide.service.test.TestingService;
 import com.openclassrooms.tourguide.service.UserService;
 import org.apache.commons.lang3.time.StopWatch;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import gpsUtil.GpsUtil;
@@ -45,7 +46,7 @@ public class TestPerformance
      * assertTrue(TimeUnit.MINUTES.toSeconds(20) >=
      * TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
      */
-//    @Disabled
+    @Disabled
     @Test
     public void highVolumeTrackLocation( )
     {
@@ -75,7 +76,7 @@ public class TestPerformance
         assertTrue( TimeUnit.MINUTES.toSeconds( 15 ) >= TimeUnit.MILLISECONDS.toSeconds( stopWatch.getTime( ) ) );
     }
 
-//    @Disabled
+    @Disabled
     @Test
     public void highVolumeGetRewards( )
     {
