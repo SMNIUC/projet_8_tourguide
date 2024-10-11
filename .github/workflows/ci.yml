@@ -22,14 +22,7 @@ jobs:
           cache: maven
 
       - name: Build with Maven
-        run: mvn dependency:resolve -Dfile=RewardCentral.jar -Dfile=TripPricer.jar -Dfile=gpsUtil.jar
-          compile
-          -Dhttps.protocols=TLSv1.2
-          -Dmaven.repo.local=$GITHUB_WORKSPACE/.m2/repository
-          -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
-          -Dorg.slf4j.simpleLogger.showDateTime=true
-          -Djava.awt.headless=true
-          --batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true
+        run: mvn -B clean compile -U --file pom.xml
 
   test:
     runs-on: ubuntu-latest
