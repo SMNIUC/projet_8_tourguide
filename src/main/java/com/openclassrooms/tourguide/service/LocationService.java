@@ -12,6 +12,17 @@ import rewardCentral.RewardCentral;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * The {@code LocationService} class provides functionality for managing proximity and distance calculations
+ * between user locations and attractions. It defines a proximity buffer to determine if a user is within range
+ * of an attraction and retrieves nearby attractions based on user locations.
+ *
+ * <p>This service integrates with external utilities:
+ * <ul>
+ *     <li>{@code GpsUtil} - retrieves known attractions</li>
+ *     <li>{@code RewardCentral} - calculates reward points for visiting attractions</li>
+ * </ul>
+ */
 @Data
 @Service
 public class LocationService
@@ -92,10 +103,10 @@ public class LocationService
 
 
     /**
-     * Get the closest five tourist attractions to the user - no matter how far away they are.
+     * Retrieves the five tourist attractions closest to the user, irrespective of distance.
      *
      * @param visitedLocation the location from which to search for nearby attractions
-     * @return a list of attractions near the specified location
+     * @return a list of the five closest attractions to the specified location
      */
     public List<ClosestAttractionsDTO> getFiveClosestAttractions( VisitedLocation visitedLocation )
     {
@@ -107,11 +118,12 @@ public class LocationService
                 .collect( Collectors.toList( ) );
     }
 
+
     /**
      * Creates a {@link ClosestAttractionsDTO} from an attraction, its distance, and the user's visited location.
      *
-     * @param attraction the attraction
-     * @param distance the distance from the user to the attraction
+     * @param attraction      the attraction
+     * @param distance        the distance from the user to the attraction
      * @param visitedLocation the user's visited location
      * @return a populated {@link ClosestAttractionsDTO}
      */

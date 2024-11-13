@@ -9,7 +9,7 @@ public class UserReward
 {
     public final VisitedLocation visitedLocation;
     public final Attraction 	 attraction;
-    public int 			 rewardPoints;
+    public int 			         rewardPoints;
 
     public UserReward( VisitedLocation visitedLocation, Attraction attraction )
     {

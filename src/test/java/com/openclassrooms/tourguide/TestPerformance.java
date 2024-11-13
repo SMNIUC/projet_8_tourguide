@@ -55,7 +55,7 @@ public class TestPerformance
         RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral( ), locationService );
         // Users should be incremented up to 100,000, and test finishes within 15
         // minutes
-        InternalTestHelper.setInternalUserNumber( 10000 );
+        InternalTestHelper.setInternalUserNumber( 100000 );
         TestingService testingService = new TestingService( );
         UserService userService = new UserService( gpsUtil, rewardsService, testingService );
 
@@ -86,7 +86,7 @@ public class TestPerformance
 
         // Users should be incremented up to 100,000, and test finishes within 20
         // minutes
-        InternalTestHelper.setInternalUserNumber( 10000 );
+        InternalTestHelper.setInternalUserNumber( 100 );
         StopWatch stopWatch = new StopWatch( );
         stopWatch.start( );
         TestingService testingService = new TestingService( );

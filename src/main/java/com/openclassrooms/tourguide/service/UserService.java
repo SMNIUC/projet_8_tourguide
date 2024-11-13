@@ -21,13 +21,19 @@ import tripPricer.TripPricer;
 import static com.openclassrooms.tourguide.service.test.TestingService.tripPricerApiKey;
 
 /**
- * Service class that provides functionality for tracking user locations, managing user rewards,
- * and generating trip deals using the TourGuide system. This class interacts with external services
- * such as GPS utility and Rewards service to perform its operations.
- * <p>
- * It also manages a set of internal test users for testing purposes.
- * </p>
+ * The {@code UserService} class provides user management and tracking functionality within the application.
+ * It leverages GPS utilities and reward services to track user locations, calculate rewards, and retrieve trip deals.
+ * This service also manages user data and provides methods for accessing user information and handling parallelized
+ * location tracking. The class operates in either a test mode, which initializes internal users for testing,
+ * or in a production mode without test initialization.
  *
+ * <p>This service utilizes the following dependencies:
+ * <ul>
+ *     <li>{@code GpsUtil} - used for obtaining user location data</li>
+ *     <li>{@code RewardsService} - used to calculate user rewards based on location</li>
+ *     <li>{@code TestingService} - provides testing utilities and manages an internal user map</li>
+ *     <li>{@code Tracker} - continuously monitors user location updates</li>
+ * </ul>
  */
 @Service
 public class UserService
@@ -140,6 +146,11 @@ public class UserService
     }
 
 
+    /**
+     * Tracks the user's location in parallel, updating visited locations and calculating rewards.
+     *
+     * @param user the user whose location is to be tracked
+     */
     public void parallelizedTrackUserLocation( User user )
     {
         CompletableFuture.supplyAsync( () -> gpsUtil.getUserLocation( user.getUserId( ) ), executorService )
